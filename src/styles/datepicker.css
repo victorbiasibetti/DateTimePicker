@@ -1,0 +1,279 @@
+/**
+ * DatePicker theme tokens.
+ *
+ * All colours, sizes, radii, and shadows are exposed as CSS Custom
+ * Properties so the component drops cleanly into any design system —
+ * consumers override these on a parent scope (or `:root`) without
+ * touching the component CSS.
+ *
+ * Tokens follow a `--dp-*` namespace to avoid clashing with the host app.
+ */
+
+.dp-root {
+  /* Palette */
+  --dp-bg: #ffffff;
+  --dp-fg: #1f2937;
+  --dp-muted-fg: #6b7280;
+  --dp-border: #e5e7eb;
+  --dp-hover-bg: #f3f4f6;
+  --dp-accent: #2563eb;
+  --dp-accent-fg: #ffffff;
+  --dp-accent-soft-bg: rgba(37, 99, 235, 0.12);
+  --dp-today-ring: #2563eb;
+  --dp-disabled-fg: #d1d5db;
+  --dp-outside-fg: #9ca3af;
+
+  /* Typography */
+  --dp-font-family: inherit;
+  --dp-font-size: 0.875rem;
+  --dp-font-size-sm: 0.75rem;
+  --dp-font-weight: 400;
+  --dp-font-weight-bold: 600;
+
+  /* Sizing & spacing */
+  --dp-radius: 12px;
+  --dp-radius-sm: 8px;
+  --dp-cell-size: 36px;
+  --dp-gap: 4px;
+  --dp-padding: 12px;
+  --dp-input-padding-block: 8px;
+  --dp-input-padding-inline: 12px;
+
+  /* Effects */
+  --dp-shadow:
+    0 10px 25px -5px rgba(15, 23, 42, 0.18),
+    0 4px 10px -2px rgba(15, 23, 42, 0.08);
+  --dp-focus-ring: 0 0 0 2px var(--dp-accent);
+  --dp-transition: 120ms ease-out;
+  --dp-disabled-opacity: 0.4;
+  --dp-z-popover: 1000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dp-root {
+    --dp-bg: #1f2937;
+    --dp-fg: #f9fafb;
+    --dp-muted-fg: #9ca3af;
+    --dp-border: #374151;
+    --dp-hover-bg: #374151;
+    --dp-accent: #60a5fa;
+    --dp-accent-fg: #0f172a;
+    --dp-accent-soft-bg: rgba(96, 165, 250, 0.18);
+    --dp-today-ring: #60a5fa;
+    --dp-disabled-fg: #4b5563;
+    --dp-outside-fg: #6b7280;
+    --dp-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.55),
+      0 4px 10px -2px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Input                                                              */
+/* ------------------------------------------------------------------ */
+
+.dp-input {
+  font: var(--dp-font-weight) var(--dp-font-size) var(--dp-font-family);
+  color: var(--dp-fg);
+  background: var(--dp-bg);
+  padding: var(--dp-input-padding-block) var(--dp-input-padding-inline);
+  border: 1px solid var(--dp-border);
+  border-radius: var(--dp-radius-sm);
+  outline: none;
+  transition: border-color var(--dp-transition), box-shadow var(--dp-transition);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dp-input:hover {
+  border-color: var(--dp-accent);
+}
+
+.dp-input:focus-visible {
+  border-color: var(--dp-accent);
+  box-shadow: var(--dp-focus-ring);
+}
+
+.dp-input[aria-disabled='true'],
+.dp-input:disabled {
+  opacity: var(--dp-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------------ */
+/* Popover                                                            */
+/* ------------------------------------------------------------------ */
+
+.dp-popover {
+  position: absolute;
+  z-index: var(--dp-z-popover);
+  background: var(--dp-bg);
+  color: var(--dp-fg);
+  border: 1px solid var(--dp-border);
+  border-radius: var(--dp-radius);
+  box-shadow: var(--dp-shadow);
+  padding: var(--dp-padding);
+  font: var(--dp-font-weight) var(--dp-font-size) var(--dp-font-family);
+  user-select: none;
+  min-width: calc(var(--dp-cell-size) * 7 + var(--dp-padding) * 2);
+}
+
+/* ------------------------------------------------------------------ */
+/* Header (month/year navigation)                                     */
+/* ------------------------------------------------------------------ */
+
+.dp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dp-gap);
+  margin-bottom: var(--dp-padding);
+}
+
+.dp-header__title {
+  font-weight: var(--dp-font-weight-bold);
+  flex: 1;
+  text-align: center;
+}
+
+.dp-nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dp-cell-size);
+  height: var(--dp-cell-size);
+  border: none;
+  background: transparent;
+  color: var(--dp-fg);
+  border-radius: var(--dp-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--dp-transition);
+  font: inherit;
+}
+
+.dp-nav-button:hover {
+  background: var(--dp-hover-bg);
+}
+
+.dp-nav-button:focus-visible {
+  outline: none;
+  box-shadow: var(--dp-focus-ring);
+}
+
+/* ------------------------------------------------------------------ */
+/* Grid                                                               */
+/* ------------------------------------------------------------------ */
+
+.dp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, var(--dp-cell-size));
+  gap: var(--dp-gap);
+}
+
+.dp-grid__weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--dp-cell-size);
+  font-size: var(--dp-font-size-sm);
+  color: var(--dp-muted-fg);
+  font-weight: var(--dp-font-weight-bold);
+  text-transform: uppercase;
+}
+
+.dp-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dp-cell-size);
+  height: var(--dp-cell-size);
+  border: none;
+  background: transparent;
+  color: var(--dp-fg);
+  border-radius: var(--dp-radius-sm);
+  cursor: pointer;
+  font: inherit;
+  transition:
+    background-color var(--dp-transition),
+    color var(--dp-transition),
+    box-shadow var(--dp-transition);
+}
+
+.dp-day:hover:not(.dp-day--disabled) {
+  background: var(--dp-hover-bg);
+}
+
+.dp-day:focus-visible {
+  outline: none;
+  box-shadow: var(--dp-focus-ring);
+}
+
+.dp-day--outside {
+  color: var(--dp-outside-fg);
+}
+
+.dp-day--today:not(.dp-day--selected) {
+  box-shadow: inset 0 0 0 1px var(--dp-today-ring);
+}
+
+.dp-day--selected {
+  background: var(--dp-accent);
+  color: var(--dp-accent-fg);
+}
+
+.dp-day--selected:hover {
+  background: var(--dp-accent);
+}
+
+.dp-day--disabled {
+  color: var(--dp-disabled-fg);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer                                                             */
+/* ------------------------------------------------------------------ */
+
+.dp-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--dp-gap);
+  margin-top: var(--dp-padding);
+  padding-top: var(--dp-padding);
+  border-top: 1px solid var(--dp-border);
+}
+
+.dp-footer__button {
+  background: transparent;
+  border: none;
+  color: var(--dp-accent);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--dp-radius-sm);
+  font: inherit;
+  font-weight: var(--dp-font-weight-bold);
+  transition: background-color var(--dp-transition);
+}
+
+.dp-footer__button:hover {
+  background: var(--dp-accent-soft-bg);
+}
+
+.dp-footer__button:focus-visible {
+  outline: none;
+  box-shadow: var(--dp-focus-ring);
+}
+
+/* Visually hidden — exposed to assistive tech only. */
+.dp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
