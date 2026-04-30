@@ -9,10 +9,11 @@
  */
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue'
 
+import type { PlainDateLike, Weekday } from '@datepicker/core'
+
 import { useDatePicker } from '../../composables/useDatePicker'
-import type { PlainDateLike, Weekday } from '../../engine/types'
 import DatePickerPopover from './DatePickerPopover.vue'
-import '../../styles/datepicker.css'
+import '@datepicker/styles/datepicker.css'
 
 interface Props {
   /** ISO `YYYY-MM-DD` string, or `null` when no date is selected. */

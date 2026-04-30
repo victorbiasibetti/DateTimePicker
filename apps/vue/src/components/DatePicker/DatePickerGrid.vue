@@ -5,7 +5,7 @@
  * user clicks a cell. No engine knowledge here — keeps the component
  * trivially testable.
  */
-import type { DayCell, PlainDateLike } from '../../engine/types'
+import type { DayCell, PlainDateLike } from '@datepicker/core'
 
 interface Props {
   cells: readonly DayCell[]

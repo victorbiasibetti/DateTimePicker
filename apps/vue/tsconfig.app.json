@@ -15,7 +15,6 @@
     "exactOptionalPropertyTypes": true,
 
     /* Path aliases for the shared engine + style tokens. */
-    "baseUrl": ".",
     "paths": {
       "@datepicker/core": ["../../src/engine/index.ts"],
       "@datepicker/styles/*": ["../../src/styles/*"]

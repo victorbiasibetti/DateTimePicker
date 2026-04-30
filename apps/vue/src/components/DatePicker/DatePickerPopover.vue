@@ -6,7 +6,8 @@
  * and surfaces user intents through events. The parent owns the engine
  * and is responsible for keyboard handling at the popover level.
  */
-import type { CalendarState, DayCell, PlainDateLike } from '../../engine/types'
+import type { CalendarState, DayCell, PlainDateLike } from '@datepicker/core'
+
 import DatePickerGrid from './DatePickerGrid.vue'
 
 interface Props {

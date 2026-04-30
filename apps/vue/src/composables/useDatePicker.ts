@@ -10,13 +10,13 @@
 
 import { computed, onScopeDispose, shallowRef, type ComputedRef, type Ref } from 'vue'
 
-import { DatePickerEngine } from '../engine/engine'
-import type {
-  CalendarState,
-  DatePickerOptions,
-  DayCell,
-  PlainDateLike,
-} from '../engine/types'
+import {
+  DatePickerEngine,
+  type CalendarState,
+  type DatePickerOptions,
+  type DayCell,
+  type PlainDateLike,
+} from '@datepicker/core'
 
 export interface DatePickerActions {
   goToNextMonth(): void
