@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "erasableSyntaxOnly": true,
+
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/engine/**/*.ts"]
+}
