@@ -32,7 +32,7 @@ const themedLabel = computed(() => themedValue.value ?? 'â€” no date selected â€
 <template>
   <main class="demo">
     <header class="demo__header">
-      <h1>Headless DatePicker</h1>
+      <h1>Headless DatePicker - Vue</h1>
       <p>Vanilla TypeScript engine, Vue UI shell, CSS-variable theme.</p>
     </header>
 
