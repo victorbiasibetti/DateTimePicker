@@ -7,7 +7,7 @@
  * effects, no manual diffing.
  */
 
-import { useCallback, useMemo, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react'
 
 import {
   DatePickerEngine,
@@ -53,13 +53,10 @@ export interface UseDatePickerReturn {
  * changes flow through dedicated setters in `actions` (e.g. `setLocale`).
  */
 export function useDatePicker(options: DatePickerOptions = {}): UseDatePickerReturn {
-  // Stable across renders — `options` may change every render but we only
-  // honour them at construction. Subsequent updates use the action setters.
-  const engineRef = useRef<DatePickerEngine | null>(null)
-  if (engineRef.current === null) {
-    engineRef.current = new DatePickerEngine(options)
-  }
-  const engine = engineRef.current
+  // Lazy `useState` builds the engine once and pins the same instance for
+  // the lifetime of the component. `options` are only honoured at construction;
+  // subsequent prop changes flow through the dedicated setters in `actions`.
+  const [engine] = useState(() => new DatePickerEngine(options))
 
   const subscribe = useCallback(
     (notify: () => void) => engine.subscribe(notify),
@@ -70,8 +67,9 @@ export function useDatePicker(options: DatePickerOptions = {}): UseDatePickerRet
 
   const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 
-  // The engine memoises its own grid; recompute key matches the snapshot.
-  const grid = useMemo(() => engine.getGrid(), [engine, state])
+  // Engine memoises the grid internally — calling it on every render is
+  // cheap (cache hit) and avoids tying React's dep array to engine internals.
+  const grid = engine.getGrid()
 
   const displayValue = useMemo(
     () => engine.formatDisplay(state.selected),
