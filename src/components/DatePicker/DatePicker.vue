@@ -63,10 +63,10 @@ const popoverPosition = ref({ top: 0, left: 0, minWidth: 0 })
 const inputDisplay = computed(() => {
   const date = state.value.selected
   if (props.formatInput) return props.formatInput(date)
-  return date ? formatInput(date) : ''
+  return date ? formatDateForInput(date) : ''
 })
 
-function formatInput(date: PlainDateLike): string {
+function formatDateForInput(date: PlainDateLike): string {
   return new Intl.DateTimeFormat(state.value.locale, { dateStyle: 'medium' }).format(
     date.toNativeDate(),
   )
