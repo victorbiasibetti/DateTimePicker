@@ -174,6 +174,108 @@ function handleInputChange(event: Event) {
     emit('update:modelValue', null)
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Keyboard handling                                                  */
+/* ------------------------------------------------------------------ */
+
+function focusActiveDayCell() {
+  const popover = popoverRef.value
+  if (!popover) return
+  const target = popover.querySelector<HTMLElement>('[data-focused="true"]')
+  target?.focus()
+}
+
+watch(
+  () => state.value.focused.toISO(),
+  () => {
+    if (!isOpen.value) return
+    nextTick(focusActiveDayCell)
+  },
+)
+
+watch(isOpen, (open) => {
+  if (!open) return
+  nextTick(focusActiveDayCell)
+})
+
+function handleInputKeydown(event: KeyboardEvent) {
+  switch (event.key) {
+    case 'ArrowDown':
+    case 'Enter':
+    case ' ':
+      if (!isOpen.value) {
+        event.preventDefault()
+        open()
+      }
+      break
+    case 'Escape':
+      if (isOpen.value) {
+        event.preventDefault()
+        close()
+      }
+      break
+  }
+}
+
+function handlePopoverKeydown(event: KeyboardEvent) {
+  if (!isOpen.value) return
+
+  switch (event.key) {
+    case 'Escape':
+      event.preventDefault()
+      close()
+      return
+    case 'Enter':
+    case ' ': {
+      // Only handle when a day cell is focused — otherwise let buttons fire.
+      const isOnDay = (event.target as HTMLElement | null)?.classList.contains('dp-day')
+      if (!isOnDay) return
+      event.preventDefault()
+      const focusedCell = grid.value.find((cell) => cell.isFocused)
+      if (focusedCell && !focusedCell.isDisabled) handleSelect(focusedCell.date)
+      return
+    }
+    case 'ArrowLeft':
+      event.preventDefault()
+      actions.moveFocusByDays(-1)
+      return
+    case 'ArrowRight':
+      event.preventDefault()
+      actions.moveFocusByDays(1)
+      return
+    case 'ArrowUp':
+      event.preventDefault()
+      actions.moveFocusByDays(-7)
+      return
+    case 'ArrowDown':
+      event.preventDefault()
+      actions.moveFocusByDays(7)
+      return
+    case 'Home':
+      event.preventDefault()
+      actions.moveFocusToStartOfWeek()
+      return
+    case 'End':
+      event.preventDefault()
+      actions.moveFocusToEndOfWeek()
+      return
+    case 'PageUp':
+      event.preventDefault()
+      if (event.shiftKey) actions.moveFocusByYears(-1)
+      else actions.moveFocusByMonths(-1)
+      return
+    case 'PageDown':
+      event.preventDefault()
+      if (event.shiftKey) actions.moveFocusByYears(1)
+      else actions.moveFocusByMonths(1)
+      return
+    case 'Tab':
+      // Tab leaves the popover entirely; close so focus flow is predictable.
+      close({ restoreFocus: false })
+      return
+  }
+}
 </script>
 
 <template>
@@ -194,6 +296,7 @@ function handleInputChange(event: Event) {
       @focus="open"
       @click="open"
       @change="handleInputChange"
+      @keydown="handleInputKeydown"
     />
 
     <Teleport to="body">
@@ -208,6 +311,7 @@ function handleInputChange(event: Event) {
           left: `${popoverPosition.left}px`,
           minWidth: `${popoverPosition.minWidth}px`,
         }"
+        @keydown="handlePopoverKeydown"
       >
         <DatePickerPopover
           :state="state"
