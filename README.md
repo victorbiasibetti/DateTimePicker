@@ -47,6 +47,56 @@ details.
 - **Themable** — every colour, radius, and dimension is a CSS variable
   under `--dp-*`.
 
+## State management between Engine and Component
+
+The engine owns the canonical state and exposes a `subscribe(listener)`
+method that fires after every mutation with a fresh, immutable
+`CalendarState` snapshot. Components never mutate state directly — they
+dispatch intent through `actions` and read derived values from the
+snapshot.
+
+- **Vue** mirrors snapshots into a `shallowRef` (`useDatePicker`
+  composable). A new top-level object per change triggers Vue's
+  reactivity without deep tracking.
+- **React** wires the same `subscribe` into `useSyncExternalStore`
+  inside the `useDatePicker` hook — no extra state, no effects.
+
+The engine could drop into Solid, Svelte, or vanilla DOM with the same
+contract, no changes.
+
+## Notes on the Temporal API
+
+The engine prefers `Temporal.PlainDate` when the runtime exposes it
+(Firefox Nightly, experimental V8 builds as of 2026), falling back to
+a `Date`-backed adapter. Two observations from building against
+Temporal:
+
+1. **Native immutability removes a class of bugs.** `addMonths(1)` of
+   January 31 yields February 28/29 automatically — no manual
+   `Math.min(day, daysInMonth(...))` clamping. The legacy adapter
+   replicates the behaviour explicitly.
+2. **`dayOfWeek` convention differs.** Temporal returns 1=Mon … 7=Sun;
+   `Date` returns 0=Sun … 6=Sat. The adapter normalises to 0-6 at the
+   boundary so engine logic stays invariant to backend.
+
+No polyfill is bundled — the legacy adapter covers every modern
+runtime. See `doc/CORE_DESIGN.md` for the full rationale and limitations.
+
+## How to run
+
+```bash
+npm install              # one install, npm workspaces
+npm run dev:vue          # Vue demo
+npm run dev:react        # React demo
+npm test                 # engine unit tests
+npm run lint             # lint both apps
+npm run build:vue        # production build
+npm run build:react
+```
+
+Per-app commands also work — see `apps/vue/README.md` and
+`apps/react/README.md`.
+
 ## Design
 
 `doc/CORE_DESIGN.md` covers how the engine works, why it is shaped
