@@ -6,6 +6,7 @@
  * the DOM, or any rendering layer.
  */
 
+import { deriveWeekStartsOn } from './locale'
 import { parsePlainDate, plainDate, todayPlainDate } from './temporal'
 import type {
   CalendarState,
@@ -20,7 +21,6 @@ import type {
 
 const GRID_CELLS = 42 // 6 weeks × 7 days
 const DEFAULT_LOCALE = 'en-US'
-const DEFAULT_WEEK_START: Weekday = 0
 
 function coerceDate(value: string | PlainDateLike | null | undefined): PlainDateLike | null {
   if (value == null) return null
@@ -42,10 +42,13 @@ export class DatePickerEngine implements DatePickerEngineAPI {
   private state: CalendarState
   private readonly listeners = new Set<Listener>()
   private gridCache: { key: string; cells: readonly DayCell[] } | null = null
+  /** True when `weekStartsOn` was not explicitly provided, so it should track locale changes. */
+  private weekStartsOnFollowsLocale: boolean
 
   constructor(options: DatePickerOptions = {}) {
     const locale = options.locale ?? DEFAULT_LOCALE
-    const weekStartsOn = options.weekStartsOn ?? DEFAULT_WEEK_START
+    this.weekStartsOnFollowsLocale = options.weekStartsOn === undefined
+    const weekStartsOn = options.weekStartsOn ?? deriveWeekStartsOn(locale)
     const today = todayPlainDate()
     const selected = coerceDate(options.initialDate ?? null)
     const min = coerceDate(options.min ?? null)
@@ -194,15 +197,11 @@ export class DatePickerEngine implements DatePickerEngineAPI {
 
   setLocale(locale: string): void {
     if (locale === this.state.locale) return
-    this.commit({
-      locale,
-      monthYearLabel: this.buildMonthYearLabel(
-        locale,
-        this.state.viewYear,
-        this.state.viewMonth,
-      ),
-      weekdayLabels: this.buildWeekdayLabels(locale, this.state.weekStartsOn),
-    })
+    this.commit(
+      this.weekStartsOnFollowsLocale
+        ? { locale, weekStartsOn: deriveWeekStartsOn(locale) }
+        : { locale },
+    )
   }
 
   setMin(date: string | PlainDateLike | null): void {
