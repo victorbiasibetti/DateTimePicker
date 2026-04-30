@@ -50,8 +50,8 @@ export const isTemporalAvailable = temporal !== null
 
 const ISO_RE = /^(\d{4})-(\d{2})-(\d{2})$/
 
-function pad2(n: number): string {
-  return n < 10 ? `0${n}` : String(n)
+function pad2(value: number): string {
+  return value < 10 ? `0${value}` : String(value)
 }
 
 /**
@@ -118,34 +118,34 @@ class LegacyPlainDate implements PlainDateLike {
     return this.toNativeDate().getDay()
   }
 
-  addDays(n: number): LegacyPlainDate {
-    if (n === 0) return this
-    const d = this.toNativeDate()
-    d.setDate(d.getDate() + n)
-    return LegacyPlainDate.fromNative(d)
+  addDays(days: number): LegacyPlainDate {
+    if (days === 0) return this
+    const native = this.toNativeDate()
+    native.setDate(native.getDate() + days)
+    return LegacyPlainDate.fromNative(native)
   }
 
-  addMonths(n: number): LegacyPlainDate {
-    if (n === 0) return this
-    let y = this.year
-    let m = this.month + n
-    while (m > 12) {
-      m -= 12
-      y += 1
+  addMonths(months: number): LegacyPlainDate {
+    if (months === 0) return this
+    let targetYear = this.year
+    let targetMonth = this.month + months
+    while (targetMonth > 12) {
+      targetMonth -= 12
+      targetYear += 1
     }
-    while (m < 1) {
-      m += 12
-      y -= 1
+    while (targetMonth < 1) {
+      targetMonth += 12
+      targetYear -= 1
     }
-    const d = Math.min(this.day, daysInMonth(y, m))
-    return new LegacyPlainDate(y, m, d)
+    const targetDay = Math.min(this.day, daysInMonth(targetYear, targetMonth))
+    return new LegacyPlainDate(targetYear, targetMonth, targetDay)
   }
 
-  addYears(n: number): LegacyPlainDate {
-    if (n === 0) return this
-    const y = this.year + n
-    const d = Math.min(this.day, daysInMonth(y, this.month))
-    return new LegacyPlainDate(y, this.month, d)
+  addYears(years: number): LegacyPlainDate {
+    if (years === 0) return this
+    const targetYear = this.year + years
+    const targetDay = Math.min(this.day, daysInMonth(targetYear, this.month))
+    return new LegacyPlainDate(targetYear, this.month, targetDay)
   }
 
   compare(other: PlainDateLike): number {
@@ -167,8 +167,8 @@ class LegacyPlainDate implements PlainDateLike {
     return new Date(this.year, this.month - 1, this.day)
   }
 
-  static fromNative(d: Date): LegacyPlainDate {
-    return new LegacyPlainDate(d.getFullYear(), d.getMonth() + 1, d.getDate())
+  static fromNative(native: Date): LegacyPlainDate {
+    return new LegacyPlainDate(native.getFullYear(), native.getMonth() + 1, native.getDate())
   }
 
   static today(): LegacyPlainDate {
@@ -180,12 +180,12 @@ class LegacyPlainDate implements PlainDateLike {
     if (!match) return null
     const [, yearStr, monthStr, dayStr] = match
     if (!yearStr || !monthStr || !dayStr) return null
-    const y = Number(yearStr)
-    const mo = Number(monthStr)
-    const da = Number(dayStr)
-    if (mo < 1 || mo > 12) return null
-    if (da < 1 || da > daysInMonth(y, mo)) return null
-    return new LegacyPlainDate(y, mo, da)
+    const year = Number(yearStr)
+    const month = Number(monthStr)
+    const day = Number(dayStr)
+    if (month < 1 || month > 12) return null
+    if (day < 1 || day > daysInMonth(year, month)) return null
+    return new LegacyPlainDate(year, month, day)
   }
 }
 
@@ -212,23 +212,23 @@ class TemporalPlainDateAdapter implements PlainDateLike {
 
   /** Normalise Temporal's 1-7 (Mon-Sun) to 0-6 (Sun-Sat). */
   get dayOfWeek(): number {
-    const d = this.inner.dayOfWeek
-    return d === 7 ? 0 : d
+    const temporalWeekday = this.inner.dayOfWeek
+    return temporalWeekday === 7 ? 0 : temporalWeekday
   }
 
-  addDays(n: number): TemporalPlainDateAdapter {
-    if (n === 0) return this
-    return new TemporalPlainDateAdapter(this.inner.add({ days: n }))
+  addDays(days: number): TemporalPlainDateAdapter {
+    if (days === 0) return this
+    return new TemporalPlainDateAdapter(this.inner.add({ days }))
   }
 
-  addMonths(n: number): TemporalPlainDateAdapter {
-    if (n === 0) return this
-    return new TemporalPlainDateAdapter(this.inner.add({ months: n }))
+  addMonths(months: number): TemporalPlainDateAdapter {
+    if (months === 0) return this
+    return new TemporalPlainDateAdapter(this.inner.add({ months }))
   }
 
-  addYears(n: number): TemporalPlainDateAdapter {
-    if (n === 0) return this
-    return new TemporalPlainDateAdapter(this.inner.add({ years: n }))
+  addYears(years: number): TemporalPlainDateAdapter {
+    if (years === 0) return this
+    return new TemporalPlainDateAdapter(this.inner.add({ years }))
   }
 
   compare(other: PlainDateLike): number {

@@ -53,8 +53,8 @@ const WEEK_START_FALLBACK: Record<string, Weekday> = {
  * 0=Sunday … 6=Saturday convention.
  */
 function normaliseEcmaFirstDay(firstDay: number): Weekday {
-  const v = firstDay === 7 ? 0 : firstDay
-  if (v >= 0 && v <= 6) return v as Weekday
+  const sundayIndexed = firstDay === 7 ? 0 : firstDay
+  if (sundayIndexed >= 0 && sundayIndexed <= 6) return sundayIndexed as Weekday
   return 0
 }
 
@@ -64,10 +64,13 @@ function normaliseEcmaFirstDay(firstDay: number): Weekday {
  */
 export function deriveWeekStartsOn(locale: string): Weekday {
   try {
-    const loc = new Intl.Locale(locale) as IntlLocaleWithWeekInfo
-    const info = typeof loc.getWeekInfo === 'function' ? loc.getWeekInfo() : loc.weekInfo
-    if (info && typeof info.firstDay === 'number') {
-      return normaliseEcmaFirstDay(info.firstDay)
+    const intlLocale = new Intl.Locale(locale) as IntlLocaleWithWeekInfo
+    const weekInfo =
+      typeof intlLocale.getWeekInfo === 'function'
+        ? intlLocale.getWeekInfo()
+        : intlLocale.weekInfo
+    if (weekInfo && typeof weekInfo.firstDay === 'number') {
+      return normaliseEcmaFirstDay(weekInfo.firstDay)
     }
   } catch {
     // Invalid tag — fall through to the static table.
@@ -77,9 +80,9 @@ export function deriveWeekStartsOn(locale: string): Weekday {
     return WEEK_START_FALLBACK[locale] ?? 0
   }
   // Try the language portion only (e.g. "en" from "en-AU").
-  const lang = locale.split('-')[0]
-  if (lang && lang in WEEK_START_FALLBACK) {
-    return WEEK_START_FALLBACK[lang] ?? 0
+  const language = locale.split('-')[0]
+  if (language && language in WEEK_START_FALLBACK) {
+    return WEEK_START_FALLBACK[language] ?? 0
   }
   return 0
 }

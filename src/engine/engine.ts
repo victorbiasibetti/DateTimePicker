@@ -317,13 +317,13 @@ export class DatePickerEngine implements DatePickerEngineAPI {
   private buildGrid(): readonly DayCell[] {
     const { viewYear, viewMonth, selected, focused, today } = this.state
     const firstOfMonth = plainDate(viewYear, viewMonth, 1)
-    const leading = this.weekOffsetOf(firstOfMonth)
-    const start = firstOfMonth.addDays(-leading)
+    const leadingOffset = this.weekOffsetOf(firstOfMonth)
+    const gridStart = firstOfMonth.addDays(-leadingOffset)
 
     const cells: DayCell[] = new Array(GRID_CELLS)
-    for (let i = 0; i < GRID_CELLS; i++) {
-      const date = start.addDays(i)
-      cells[i] = {
+    for (let cellIndex = 0; cellIndex < GRID_CELLS; cellIndex++) {
+      const date = gridStart.addDays(cellIndex)
+      cells[cellIndex] = {
         key: date.toISO(),
         date,
         inCurrentMonth: date.month === viewMonth && date.year === viewYear,
@@ -343,14 +343,14 @@ export class DatePickerEngine implements DatePickerEngineAPI {
   }
 
   private buildWeekdayLabels(locale: string, weekStartsOn: Weekday): readonly string[] {
-    const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' })
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' })
     // 1970-01-04 is a Sunday — anchor for deterministic weekday rendering.
     const sundayEpoch = new Date(1970, 0, 4)
     const labels: string[] = new Array(7)
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(sundayEpoch)
-      d.setDate(sundayEpoch.getDate() + ((weekStartsOn + i) % 7))
-      labels[i] = fmt.format(d)
+    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+      const weekdayDate = new Date(sundayEpoch)
+      weekdayDate.setDate(sundayEpoch.getDate() + ((weekStartsOn + dayIndex) % 7))
+      labels[dayIndex] = formatter.format(weekdayDate)
     }
     return labels
   }
