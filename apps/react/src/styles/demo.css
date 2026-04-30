@@ -1,0 +1,123 @@
+.demo {
+  /* Local design tokens — adapt to the user's colour scheme so neither
+     foreground nor button surfaces collapse onto the page background. */
+  --demo-fg: #1f2937;
+  --demo-muted: #6b7280;
+  --demo-surface: #ffffff;
+  --demo-surface-alt: #f9fafb;
+  --demo-border: #e5e7eb;
+  --demo-accent: #2563eb;
+  --demo-accent-fg: #ffffff;
+
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--demo-fg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .demo {
+    --demo-fg: #e2e8f0;
+    --demo-muted: #94a3b8;
+    --demo-surface: #1e293b;
+    --demo-surface-alt: #0f172a;
+    --demo-border: #334155;
+    --demo-accent: #60a5fa;
+    --demo-accent-fg: #0f172a;
+  }
+}
+
+.demo__header h1 {
+  margin: 0 0 8px;
+  font-size: 1.875rem;
+  letter-spacing: -0.02em;
+}
+
+.demo__header p {
+  margin: 0;
+  color: var(--demo-muted);
+}
+
+.demo__locales h2,
+.demo__example h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--demo-muted);
+}
+
+.demo__locale-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo__locale-button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--demo-border);
+  background: var(--demo-surface);
+  color: var(--demo-fg);
+  cursor: pointer;
+  font: inherit;
+  transition: all 120ms ease-out;
+}
+
+.demo__locale-button[aria-pressed='true'] {
+  background: var(--demo-accent);
+  border-color: var(--demo-accent);
+  color: var(--demo-accent-fg);
+}
+
+.demo__example {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo__hint {
+  margin: 0 0 4px;
+  color: var(--demo-muted);
+  font-size: 0.875rem;
+}
+
+.demo__hint code {
+  background: var(--demo-surface-alt);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  color: var(--demo-fg);
+}
+
+.demo__output {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--demo-surface-alt);
+  border: 1px solid var(--demo-border);
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  color: var(--demo-fg);
+}
+
+/* Demonstrates how a consumer rethemes via the documented CSS variables. */
+.demo__example--themed {
+  --dp-bg: #0f172a;
+  --dp-fg: #e2e8f0;
+  --dp-muted-fg: #94a3b8;
+  --dp-border: #1e293b;
+  --dp-hover-bg: #1e293b;
+  --dp-accent: #f59e0b;
+  --dp-accent-fg: #0f172a;
+  --dp-accent-soft-bg: rgba(245, 158, 11, 0.18);
+  --dp-today-ring: #f59e0b;
+  --dp-disabled-fg: #475569;
+  --dp-outside-fg: #64748b;
+  --dp-radius: 16px;
+  --dp-cell-size: 40px;
+}
