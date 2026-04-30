@@ -16,6 +16,7 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type KeyboardEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -238,6 +239,105 @@ export function DatePicker({
     [actions, onChange, parseISO],
   )
 
+  /* -------------------------------------------------------------- */
+  /* Keyboard handling                                              */
+  /* -------------------------------------------------------------- */
+
+  // Move DOM focus to the day cell whose state.focused matches, so arrow
+  // keys keep working as the user navigates between dates.
+  useEffect(() => {
+    if (!isOpen) return
+    queueMicrotask(() => {
+      const target = popoverRef.current?.querySelector<HTMLElement>(
+        '[data-focused="true"]',
+      )
+      target?.focus()
+    })
+  }, [isOpen, state.focused])
+
+  const handleInputKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      switch (event.key) {
+        case 'ArrowDown':
+        case 'Enter':
+        case ' ':
+          if (!isOpen) {
+            event.preventDefault()
+            open()
+          }
+          break
+        case 'Escape':
+          if (isOpen) {
+            event.preventDefault()
+            close()
+          }
+          break
+      }
+    },
+    [close, isOpen, open],
+  )
+
+  const handlePopoverKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (!isOpen) return
+
+      switch (event.key) {
+        case 'Escape':
+          event.preventDefault()
+          close()
+          return
+        case 'Enter':
+        case ' ': {
+          const target = event.target as HTMLElement | null
+          if (!target?.classList.contains('dp-day')) return
+          event.preventDefault()
+          const focusedCell = grid.find((cell) => cell.isFocused)
+          if (focusedCell && !focusedCell.isDisabled) handleSelect(focusedCell.date)
+          return
+        }
+        case 'ArrowLeft':
+          event.preventDefault()
+          actions.moveFocusByDays(-1)
+          return
+        case 'ArrowRight':
+          event.preventDefault()
+          actions.moveFocusByDays(1)
+          return
+        case 'ArrowUp':
+          event.preventDefault()
+          actions.moveFocusByDays(-7)
+          return
+        case 'ArrowDown':
+          event.preventDefault()
+          actions.moveFocusByDays(7)
+          return
+        case 'Home':
+          event.preventDefault()
+          actions.moveFocusToStartOfWeek()
+          return
+        case 'End':
+          event.preventDefault()
+          actions.moveFocusToEndOfWeek()
+          return
+        case 'PageUp':
+          event.preventDefault()
+          if (event.shiftKey) actions.moveFocusByYears(-1)
+          else actions.moveFocusByMonths(-1)
+          return
+        case 'PageDown':
+          event.preventDefault()
+          if (event.shiftKey) actions.moveFocusByYears(1)
+          else actions.moveFocusByMonths(1)
+          return
+        case 'Tab':
+          // Tab leaves the popover entirely; close so focus flow stays predictable.
+          close({ restoreFocus: false })
+          return
+      }
+    },
+    [actions, close, grid, handleSelect, isOpen],
+  )
+
   return (
     <div className="dp-root">
       <input
@@ -256,6 +356,7 @@ export function DatePicker({
         onFocus={open}
         onClick={open}
         onChange={handleInputChange}
+        onKeyDown={handleInputKeyDown}
       />
 
       {isOpen &&
@@ -270,6 +371,7 @@ export function DatePicker({
               left: position.left,
               minWidth: position.minWidth,
             }}
+            onKeyDown={handlePopoverKeyDown}
           >
             <DatePickerPopover
               state={state}
