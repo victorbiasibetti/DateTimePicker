@@ -5,6 +5,11 @@ framework. The engine is plain TypeScript with **zero runtime
 dependencies**. Two example apps consume the same engine to prove
 the point.
 
+## Live demos
+
+- Vue 3: https://date-time-picker-vue-three.vercel.app/
+- React 19: https://date-time-picker-react.vercel.app/
+
 ## What's in the box
 
 ```
