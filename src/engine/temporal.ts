@@ -176,11 +176,13 @@ class LegacyPlainDate implements PlainDateLike {
   }
 
   static fromISO(value: string): LegacyPlainDate | null {
-    const m = ISO_RE.exec(value)
-    if (!m) return null
-    const y = Number(m[1])
-    const mo = Number(m[2])
-    const da = Number(m[3])
+    const match = ISO_RE.exec(value)
+    if (!match) return null
+    const [, yearStr, monthStr, dayStr] = match
+    if (!yearStr || !monthStr || !dayStr) return null
+    const y = Number(yearStr)
+    const mo = Number(monthStr)
+    const da = Number(dayStr)
     if (mo < 1 || mo > 12) return null
     if (da < 1 || da > daysInMonth(y, mo)) return null
     return new LegacyPlainDate(y, mo, da)
