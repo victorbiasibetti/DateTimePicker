@@ -17,6 +17,8 @@ interface DatePickerPopoverProps {
   onSelect: (date: PlainDateLike) => void
   onPrevMonth: () => void
   onNextMonth: () => void
+  onPrevYear: () => void
+  onNextYear: () => void
   onToday: () => void
   onClear: () => void
   showFooter?: boolean
@@ -24,6 +26,9 @@ interface DatePickerPopoverProps {
   clearLabel?: string
   prevMonthLabel?: string
   nextMonthLabel?: string
+  prevYearLabel?: string
+  nextYearLabel?: string
+  showNavYearsButtons?: boolean
 }
 
 export function DatePickerPopover({
@@ -33,6 +38,8 @@ export function DatePickerPopover({
   onSelect,
   onPrevMonth,
   onNextMonth,
+  onPrevYear,
+  onNextYear,
   onToday,
   onClear,
   showFooter = true,
@@ -40,6 +47,9 @@ export function DatePickerPopover({
   clearLabel = 'Clear',
   prevMonthLabel = 'Previous month',
   nextMonthLabel = 'Next month',
+  prevYearLabel = 'Previous year',
+  nextYearLabel = 'Next year',
+  showNavYearsButtons = false,
 }: DatePickerPopoverProps) {
   return (
     <div
@@ -49,6 +59,15 @@ export function DatePickerPopover({
       aria-label={state.monthYearLabel}
     >
       <header className="dp-header">
+          {showNavYearsButtons && <button
+            type="button"
+            className="dp-nav-button"
+            aria-label={prevYearLabel}
+            disabled={!state.canGoToPrevYear}
+            onClick={onPrevYear}
+          >
+            «
+          </button>}
         <button
           type="button"
           className="dp-nav-button"
@@ -68,6 +87,16 @@ export function DatePickerPopover({
         >
           ›
         </button>
+        {showNavYearsButtons && (
+          <button
+            type="button"
+            className="dp-nav-button"
+            aria-label={nextYearLabel}
+            disabled={!state.canGoToNextYear}
+          onClick={onNextYear}
+        >
+          »
+        </button>)}
       </header>
 
       <DatePickerGrid

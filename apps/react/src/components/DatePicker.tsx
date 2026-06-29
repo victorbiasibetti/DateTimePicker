@@ -380,8 +380,11 @@ export function DatePicker({
               onSelect={handleSelect}
               onPrevMonth={actions.goToPrevMonth}
               onNextMonth={actions.goToNextMonth}
+              onPrevYear={actions.goToPrevYear}
+              onNextYear={actions.goToNextYear}
               onToday={handleToday}
               onClear={handleClear}
+              showNavYearsButtons
             />
           </div>,
           document.body,

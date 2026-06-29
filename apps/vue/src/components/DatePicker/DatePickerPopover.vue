@@ -19,6 +19,8 @@ interface Props {
   clearLabel?: string
   prevMonthLabel?: string
   nextMonthLabel?: string
+  prevYearLabel?: string
+  nextYearLabel?: string
 }
 
 withDefaults(defineProps<Props>(), {
@@ -27,12 +29,16 @@ withDefaults(defineProps<Props>(), {
   clearLabel: 'Clear',
   prevMonthLabel: 'Previous month',
   nextMonthLabel: 'Next month',
+  prevYearLabel: 'Previous year',
+  nextYearLabel: 'Next year',
 })
 
 const emit = defineEmits<{
   (event: 'select', date: PlainDateLike): void
   (event: 'prev-month'): void
   (event: 'next-month'): void
+  (event: 'prev-year'): void
+  (event: 'next-year'): void
   (event: 'today'): void
   (event: 'clear'): void
 }>()
@@ -46,6 +52,15 @@ const emit = defineEmits<{
     :aria-label="state.monthYearLabel"
   >
     <header class="dp-header">
+      <button
+        type="button"
+        class="dp-nav-button"
+        :aria-label="prevYearLabel"
+        :disabled="!state.canGoToPrevYear"
+        @click="emit('prev-year')"
+      >
+        «
+      </button>
       <button
         type="button"
         class="dp-nav-button"
@@ -64,6 +79,15 @@ const emit = defineEmits<{
         @click="emit('next-month')"
       >
         ›
+      </button>
+      <button
+        type="button"
+        class="dp-nav-button"
+        :aria-label="nextYearLabel"
+        :disabled="!state.canGoToNextYear"
+        @click="emit('next-year')"
+      >
+        »
       </button>
     </header>
 

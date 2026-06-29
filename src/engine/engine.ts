@@ -7,7 +7,7 @@
  */
 
 import { deriveWeekStartsOn } from './locale'
-import { parsePlainDate, plainDate, todayPlainDate } from './temporal'
+import { getDaysInMonth, parsePlainDate, plainDate, todayPlainDate } from './temporal'
 import type {
   CalendarState,
   DatePickerEngineAPI,
@@ -67,6 +67,8 @@ export class DatePickerEngine implements DatePickerEngineAPI {
       weekStartsOn,
       monthYearLabel: this.buildMonthYearLabel(locale, focused.year, focused.month),
       weekdayLabels: this.buildWeekdayLabels(locale, weekStartsOn),
+      canGoToPrevYear: this.canStepYear(-1, focused.year, focused.month, min),
+      canGoToNextYear: this.canStepYear(1, focused.year, focused.month, max),
     }
   }
 
@@ -243,12 +245,12 @@ export class DatePickerEngine implements DatePickerEngineAPI {
 
   private commit(partial: Partial<CalendarState>): void {
     const merged: CalendarState = { ...this.state, ...partial }
-    const monthOrLocaleChanged =
-      partial.viewYear !== undefined ||
-      partial.viewMonth !== undefined ||
-      partial.locale !== undefined
+    const viewChanged = partial.viewYear !== undefined || partial.viewMonth !== undefined
+    const monthOrLocaleChanged = viewChanged || partial.locale !== undefined
     const weekOrLocaleChanged =
       partial.weekStartsOn !== undefined || partial.locale !== undefined
+    const yearNavChanged =
+      viewChanged || partial.min !== undefined || partial.max !== undefined
 
     this.state = {
       ...merged,
@@ -258,6 +260,12 @@ export class DatePickerEngine implements DatePickerEngineAPI {
       weekdayLabels: weekOrLocaleChanged
         ? this.buildWeekdayLabels(merged.locale, merged.weekStartsOn)
         : merged.weekdayLabels,
+      canGoToPrevYear: yearNavChanged
+        ? this.canStepYear(-1, merged.viewYear, merged.viewMonth, merged.min)
+        : merged.canGoToPrevYear,
+      canGoToNextYear: yearNavChanged
+        ? this.canStepYear(1, merged.viewYear, merged.viewMonth, merged.max)
+        : merged.canGoToNextYear,
     }
     this.gridCache = null
     this.emit()
@@ -276,7 +284,30 @@ export class DatePickerEngine implements DatePickerEngineAPI {
   }
 
   private shiftViewYear(years: number): void {
+    const allowed = years < 0 ? this.state.canGoToPrevYear : this.state.canGoToNextYear
+    if (!allowed) return
     this.commit({ viewYear: this.state.viewYear + years })
+  }
+
+  /**
+   * Whether stepping the view a year in `direction` (-1 back, +1 forward)
+   * still lands on a month page that overlaps the [min, max] range.
+   * Stepping back is blocked once the target month ends before `min`;
+   * stepping forward once it starts after `max`.
+   */
+  private canStepYear(
+    direction: -1 | 1,
+    viewYear: number,
+    viewMonth: number,
+    bound: PlainDateLike | null,
+  ): boolean {
+    if (!bound) return true
+    const targetYear = viewYear + direction
+    if (direction < 0) {
+      const lastDay = getDaysInMonth(targetYear, viewMonth)
+      return plainDate(targetYear, viewMonth, lastDay).compare(bound) >= 0
+    }
+    return plainDate(targetYear, viewMonth, 1).compare(bound) <= 0
   }
 
   private moveFocusTo(target: PlainDateLike): void {

@@ -160,6 +160,15 @@
   box-shadow: var(--dp-focus-ring);
 }
 
+.dp-nav-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.dp-nav-button:disabled:hover {
+  background: transparent;
+}
+
 /* ------------------------------------------------------------------ */
 /* Grid                                                               */
 /* ------------------------------------------------------------------ */
