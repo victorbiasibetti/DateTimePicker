@@ -62,6 +62,10 @@ export interface CalendarState {
   readonly monthYearLabel: string
   /** Length-7 weekday short labels, ordered by `weekStartsOn`. */
   readonly weekdayLabels: readonly string[]
+  /** False when stepping a year back would land entirely before `min`. */
+  readonly canGoToPrevYear: boolean
+  /** False when stepping a year forward would land entirely after `max`. */
+  readonly canGoToNextYear: boolean
 }
 
 /** Options accepted when constructing the engine. */

@@ -98,6 +98,34 @@ describe('DatePickerEngine — navigation', () => {
     expect(engine.getState().viewYear).toBe(2025)
   })
 
+  it('blocks year navigation past the min/max bounds', () => {
+    const engine = new DatePickerEngine({
+      initialDate: '2026-04-30',
+      min: '2025-06-01',
+      max: '2027-12-31',
+      locale: 'en-US',
+    })
+
+    // The April 2025 page ends (2025-04-30) before min (2025-06-01) → blocked.
+    engine.goToPrevYear()
+    expect(engine.getState().viewYear).toBe(2026)
+    expect(engine.getState().canGoToPrevYear).toBe(false)
+
+    // April 2027 still sits within max → allowed.
+    engine.goToNextYear()
+    expect(engine.getState().viewYear).toBe(2027)
+    // April 2028 starts (2028-04-01) after max → blocked.
+    engine.goToNextYear()
+    expect(engine.getState().viewYear).toBe(2027)
+    expect(engine.getState().canGoToNextYear).toBe(false)
+  })
+
+  it('leaves year navigation unbounded when no min/max is set', () => {
+    const engine = makeEngine('2026-04-30')
+    expect(engine.getState().canGoToPrevYear).toBe(true)
+    expect(engine.getState().canGoToNextYear).toBe(true)
+  })
+
   it('jumps to a target date', () => {
     const engine = makeEngine('2026-04-30')
     engine.goToDate('2030-08-12')

@@ -321,6 +321,8 @@ function handlePopoverKeydown(event: KeyboardEvent) {
           @select="handleSelect"
           @prev-month="actions.goToPrevMonth"
           @next-month="actions.goToNextMonth"
+          @prev-year="actions.goToPrevYear"
+          @next-year="actions.goToNextYear"
           @today="handleToday"
           @clear="handleClear"
         />
