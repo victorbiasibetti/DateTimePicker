@@ -7,8 +7,8 @@ the point.
 
 ## Live demos
 
-- Vue 3: https://date-time-picker-vue-three.vercel.app/
-- React 19: https://date-time-picker-react.vercel.app/
+- Vue 3: [https://date-time-picker-vue-three.vercel.app/](https://date-time-picker-vue-seven.vercel.app/)
+- React 19: [https://date-time-picker-react.vercel.app/](https://date-time-picker-react.vercel.app/)
 
 ## What's in the box
 
